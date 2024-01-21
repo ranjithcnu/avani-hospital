@@ -1,50 +1,77 @@
+// src/components/LoginPage.js
+
 import React from 'react';
-import YourLogo from '../styles/logo.jpg'; // Make sure to import your logo
+import { Container, Paper, TextField, Button, Typography, Box, Grid } from '@mui/material';
+import { blue } from '@mui/material/colors';
+import hospitalImage from '../styles/logo.jpg'; 
+import '../styles/login.css'
 
 const LoginPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full space-y-8">
-        <div className="flex justify-between">
-          {/* Logo container */}
-          <div className="w-1/2 bg-white p-8 rounded-l-lg shadow-lg">
-            <img src={YourLogo} alt="Your Logo" className="h-12 w-auto" />
-          </div>
-
-          {/* Form container */}
-          <div className="w-1/2 bg-white p-8 rounded-r-lg shadow-lg">
-            <form className="space-y-6" action="#" method="POST">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                autoComplete="email"
+    <Container component="main" maxWidth="md">
+      <Grid container spacing={2} alignItems="center" justifyContent="center" style={{ marginTop: '100px' }}>
+        <Grid item xs={12} md={6}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <img src={hospitalImage} alt="Hospital" style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper
+            elevation={3}
+            style={{
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography component="h1" variant="h5" style={{ color: blue[800], marginBottom: '20px', animation: 'fadeIn 3s' }}>
+              AVANI HOSPITAL MANAGEMENT 
+            </Typography>
+            <Box component="form" noValidate sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                variant="outlined"
               />
-              <input
-                type="password"
+              <TextField
+                margin="normal"
+                required
+                fullWidth
                 name="password"
+                label="Password"
+                type="password"
                 id="password"
                 autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                variant="outlined"
               />
-              <div>
-                <button
-                  type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Sign in
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, bgcolor: blue[800] }}
+              >
+                Sign In
+              </Button>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 
