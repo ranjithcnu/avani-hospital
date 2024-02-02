@@ -1,0 +1,77 @@
+.body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif; /* Professional-looking font */
+    overflow: hidden;
+}
+
+/* Fullscreen background image */
+.backgroundImage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../styles/logo.png'); /* Update with the path to your image */
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* Ensure it's behind all other content */
+}
+
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: none; /* No more gradient background */
+}
+
+.loginForm {
+    background-color: rgba(255, 255, 255, 0.384); /* Semi-transparent background */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: Adjust shadow to be more visible on the image */
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+
+.loginTitle {
+    color:rgb(59, 45, 42);
+    margin-bottom: 1rem;
+}
+
+.inputField[type="text"]
+{
+    width: 99%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px; 
+}
+.inputField[type="password"] {
+    width: 95%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Add styles for the print button */
+.print-button {
+    background-color: #0074d9; /* Background color */
+    color: #fff; /* Text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Padding for button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Cursor style on hover */
+  }
+  
+
+.errorMessage {
+    color: red;
+    margin-top: 1rem;
+}

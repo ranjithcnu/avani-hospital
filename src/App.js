@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from '../src/components/login'; // Ensure you have created this component
 
+import Home from '../src/components/home';
+
 
 function App() {
   return (
@@ -10,6 +12,7 @@ function App() {
       
         <Routes>
           <Route path="/" element={<LoginPage />} />
+          <Route path="/home" element={<Home />} />
          
         </Routes>
       </div>
