@@ -1,0 +1,68 @@
+@import 'https://fonts.googleapis.com/css?family=Rajdhani:700';
+
+
+
+.dashboard-header {
+    width: 100%;
+    background-color: #073844;
+    padding: 1px;
+    display: flex;
+    justify-content: center; // Center the header content horizontally
+    align-items: center;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    height: 60px;
+
+    // Assuming the header contains a title or logo
+    .header-title {
+      // Styles for the header title or logo
+    }
+
+    .toggle-button {
+      position: absolute;
+      left: 20px; // Position the toggle button inside the header
+    }
+  }
+
+
+  .animated-header {
+    flex-grow: 1; // Allows the header to take up the maximum width
+    text-align: center; // Centers the header text
+    font-family: 'Rajdhani', sans-serif;
+    color: #7c2d15;
+    font-size: 60px;
+    line-height: 1;
+    background: -webkit-linear-gradient(transparent, transparent), url(http://html5book.ru/wp-content/uploads/2016/08/bubbles.png) repeat;
+    background-size: 200px auto;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    animation: background 10s infinite linear;
+  }
+  .sidebar-toggle {
+    background: none;
+    border: none;
+    font-size: 24px; // Adjust the size as needed
+    cursor: pointer;
+    margin-right: auto; // This pushes the rest of the content to the right
+
+    span {
+      display: block;
+      // Additional styling for the hamburger icon
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes background {
+    from {
+      background-position: 0 0%;
+    }
+    to {
+      background-position: 0 -200px;
+    }
+  }

@@ -118,8 +118,8 @@ def add_patient():
         return jsonify({"success": False, "message": "Patient with the same name and mobile already exists!"})
     
     # Insert data into the table if the patient doesn't exist
-    insert_query = "INSERT INTO patientdetails (patientname, mobile,visitedfrom, visitedfor, dateofvisit, surgery) VALUES (%s, %s, %s, %s, %s, %s)"
-    cursor.execute(insert_query, (data['patientname'], data['mobile'],data['visitedfrom'], data['visitedfor'], data['dateofvisit'], data['surgery']))
+    insert_query = "INSERT INTO patientdetails (patientname, mobile,visitedfrom, age,blood_pressure, dateofvisit, gender) VALUES (%s, %s, %s, %s, %s, %s,%s)"
+    cursor.execute(insert_query, (data['patientname'], data['mobile'],data['visitedfrom'], data['age'],data['blood_pressure'], data['dateofvisit'], data['gender']))
     print("patient added!")
     conn.commit()
     cursor.close()

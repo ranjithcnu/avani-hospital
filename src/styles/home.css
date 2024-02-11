@@ -3,7 +3,7 @@
 body {
     margin: 0;
 
-    background: linear-gradient(to right, #2d7385bb, #654ea3, #e99343c7);
+    background: linear-gradient(to right, #2d7385bb, #654ea3, #3de77ede);
       
     font-family: 'Rajdhani', sans-serif;
   }
@@ -36,7 +36,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 90px; /* Adjust to your preference */
-    background: #1481c481;
+    background: #073844;
     padding: 0; /* Remove padding if using flexbox centering */
     margin-bottom: 20px; /* Spacing before the buttons */
   }
@@ -46,7 +46,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 40px; /* Match the header bar height */
-    background: #1481c481; /* Match the header bar background color */
+    background: #073844; /* Match the header bar background color */
     padding: 0;
     margin-top: 20px; /* Spacing from the content above */
     color: #F2F5FE; /* Match the header bar text color */

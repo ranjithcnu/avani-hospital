@@ -1,0 +1,23 @@
+// Dashboard.scss
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+
+  .footer-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px; // Adjust to match your design
+    background: #073844; // Your chosen footer background color
+    color: #F2F5FE; // Your chosen footer text color
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 0;
+    margin-top: 20px; // Space from the content above
+    font-size: 16px; // Adjust as needed
+    text-align: center;
+  }
+
+}

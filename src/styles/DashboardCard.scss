@@ -1,0 +1,68 @@
+.dashboard-content {
+  margin-top: 70px; // Ensure this is enough to account for the header's height
+  margin-left: 180px; // Adjust based on your sidebar's width
+  transition: margin-left 0.3s; // For smooth sidebar toggling
+  width: calc(100% - 200px); // Full width minus the sidebar
+  height: calc(100vh - 60px); // Full height minus the header
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 20px;
+  }
+}
+.dashboard-card {
+  background: white;
+  border-radius: 9px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(99, 156, 189, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  // Card Icon
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  // Card Title
+  h3 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+
+  // Card Details
+  p {
+    font-size: 1rem;
+    margin: 5px 0;
+  }
+
+  // Colors for cards
+  &.teal {
+    background-color: #1abc9c;
+  }
+  &.orange {
+    background-color: #f39c12;
+  }
+  &.light-blue {
+    background-color: #3498db;
+  }
+  &.salmon {
+    background-color: #e74c3c;
+  }
+  &.green {
+    background-color: #2ecc71;
+  }
+  &.mint {
+    background-color: #16a085;
+  }
+  &.red {
+    background-color: #c0392b;
+  }
+  &.light-navy {
+    background-color: #34495ec0;
+  }
+  // Add more colors as needed for your card types
+}

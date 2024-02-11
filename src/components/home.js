@@ -2,8 +2,10 @@ import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 import '../styles/home.css';
-import fulllogo from '../styles/full_logo.jpg';
-import watermarkImage from '../styles/logo.jpg';
+//import fulllogo from '../styles/full_logo.jpg';
+import tellogo from '../styles/avaniTellogo.jpg';
+import englogo from '../styles/avaniEnlogo.jpg';
+//import watermarkImage from '../styles/logo.jpg';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,8 +13,10 @@ const Home = () => {
   const [formData, setFormData] = useState({
     patientname: '',
     mobile: '',
-    visitedfor: '',
-    surgery: 'no',
+    visitedfrom:'',
+    age:'',
+    blood_pressure: '',
+    gender: 'male',
   });
   // Removed the serialNumber state since it is now passed directly to handlePrint
 
@@ -32,7 +36,9 @@ const Home = () => {
         });
       }
     };
-
+const goToDashboard = () => {
+  navigate('/dashboard');
+}
   // Function to get the current date in dd-mm-yyyy format
   const getCurrentDate = () => {
     const currentDate = new Date();
@@ -64,15 +70,21 @@ const Home = () => {
         const serialNumberResponse = await fetch('http://localhost:5000/getserialnumber');
         const serialNumberData = await serialNumberResponse.json();
         alert(`Patient added successfully. Serial Number: ${serialNumberData.serialNumber}`);
-        handlePrint(serialNumberData.serialNumber, formData.patientname, currentDate); // Pass required data to handlePrint
+        handlePrint(serialNumberData.serialNumber,
+          formData.age, 
+          formData.patientname, 
+          formData.blood_pressure, 
+          formData.gender,
+          currentDate); // Pass required data to handlePrint
         
         // Reset form and close popup
         setFormData({
           patientname: '',
           mobile: '',
           visitedfrom:'',
-          visitedfor: '',
-          surgery: 'no',
+          age:'',
+          blood_pressure: '',
+          gender: '',
         });
         setShowModal(false);
       } else {
@@ -107,18 +119,20 @@ const handleLogout = () => {
     return null;
   }
 
-  
-  const handlePrint = (serialNumber, patientName, currentDate) => {
+  const handlePrint = (serialNumber, age, patientName, blood_pressure, gender, currentDate) => {
     // Render the component to a string
     const printContent = ReactDOMServer.renderToString(
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
           <div style={{ flex: 1, textAlign: 'left' }}>
             <p><strong>Patient Name:</strong> {patientName}</p>
-            <p><strong>Token Number:</strong> {serialNumber}</p>
+            <p><strong>Patient Age:</strong> {age}</p>
+            <p><strong>Blood Pressure:</strong> {blood_pressure}</p>
+            <p><strong>Gender:</strong> {gender}</p>
           </div>
           <div style={{ flex: 1, textAlign: 'right' }}>
             <p><strong>Date:</strong> {currentDate}</p>
+            <p><strong>Token Number:</strong> {serialNumber}</p>
           </div>
         </div>
       </div>
@@ -141,7 +155,7 @@ const handleLogout = () => {
           }
           .image-header-container {
             text-align: center;
-            background: url('${fulllogo}') no-repeat center center; 
+            background: url('${tellogo}') no-repeat center center; 
             background-size: contain;
             height: 200px;
             width: 100%;
@@ -166,10 +180,18 @@ const handleLogout = () => {
             text-align: center;
             transform: translateY(-50%);
             height: 150px; 
-            background: url('${watermarkImage}') no-repeat center center;
+            background: url('${englogo}') no-repeat center center;
             background-size: contain;
             opacity: 0.5;
             z-index: -1; /* Send the watermark to the back */
+          }
+          .footer-text {
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 10px; /* Adjust based on your footer height */
+            left: 0;
+            font-size: small; /* Small text for the footer */
           }
           .print-button-container {
             text-align: center;
@@ -191,10 +213,10 @@ const handleLogout = () => {
           @media print {
             /* Include the watermark and images in the print */
             .image-header-container {
-                background-image: url('${fulllogo}') !important;
+                background-image: url('${tellogo}') !important;
               }
             .watermark{
-                background-image: url('${watermarkImage}') !important;
+                background-image: url('${englogo}') !important;
             }, 
             /* Hide the print button in print mode */
             .print-button-container {
@@ -209,8 +231,13 @@ const handleLogout = () => {
         <div class="content">
           ${printContent}
         </div>
+        <hr />
         <div class="watermark"></div>
-        <div class="print-button-container">
+        <div class="footer-text">
+        <hr /> <!-- Horizontal line directly above the footer text -->
+        AVANI ORTHO & TRAUMA CARE HOSPITAL, NARSAMPET, beside CTO OFFICE, Telangana 506132 Contact:7299666222.
+      </div>
+ <div class="print-button-container">
           <button class="print-button" onclick="printDocument()">Print</button>
         </div>
         <script>
@@ -292,27 +319,41 @@ const handleLogout = () => {
                         required/>
                     </div>
 
+
                     <div className="form-group">
-                    <label htmlFor="visitedfor">Visited For</label>
+                    <label htmlFor="age">AGE</label>
                     <input
                         type="text"
-                        name="visitedfor"
-                        id="visitedfor"
-                        placeholder="Visited For"
-                        value={formData.visitedfor}
+                        name="age"
+                        id="age"
+                        placeholder="AGE "
+                        value={formData.age}
+                        onChange={handleInputChange}
+                        required/>
+                    </div>
+
+                    <div className="form-group">
+                    <label htmlFor="blood_pressure">Blood Pressure</label>
+                    <input
+                        type="text"
+                        name="blood_pressure"
+                        id="blood_pressure"
+                        placeholder="Blood Pressure"
+                        value={formData.blood_pressure}
                         onChange={handleInputChange}
                         required/>
                     </div>
                     <div className="form-group">
-                    <label htmlFor="surgery">Surgery</label>
+                    <label htmlFor="gender">Gender</label>
                     <select
-                        name="surgery"
-                        id="surgery"
-                        value={formData.surgery}
-                        onChange={handleInputChange}
-                        required>
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
+                      name="gender"
+                      id="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      required> 
+                      <option value="">Select Gender</option> 
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
                     </select>
                     </div>
                     <button type="submit">Submit</button>
@@ -320,8 +361,11 @@ const handleLogout = () => {
                 </div>
             </div>
             )}
-            <button className="animated-button">LAB REPORTS</button>
-            <button className="animated-button">DASHBOARD</button>
+
+            <button className="animated-button" >LAB REPORTS</button>
+            <button className="animated-button" onClick={goToDashboard}>
+        DASHBOARD
+      </button>
         </div>
 
         {/* Footer added here */}
