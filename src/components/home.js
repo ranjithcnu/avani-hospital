@@ -16,7 +16,9 @@ const Home = () => {
     visitedfrom:'',
     age:'',
     blood_pressure: '',
-    gender: 'male',
+    gender: '',
+    department:'',
+    doctors_names:'',
   });
   // Removed the serialNumber state since it is now passed directly to handlePrint
 
@@ -75,6 +77,8 @@ const goToDashboard = () => {
           formData.patientname, 
           formData.blood_pressure, 
           formData.gender,
+          formData.department,
+          formData.doctors_names,
           currentDate); // Pass required data to handlePrint
         
         // Reset form and close popup
@@ -85,6 +89,8 @@ const goToDashboard = () => {
           age:'',
           blood_pressure: '',
           gender: '',
+          department:'',
+          doctors_names:'',
         });
         setShowModal(false);
       } else {
@@ -119,7 +125,7 @@ const handleLogout = () => {
     return null;
   }
 
-  const handlePrint = (serialNumber, age, patientName, blood_pressure, gender, currentDate) => {
+  const handlePrint = (serialNumber, age, patientName, blood_pressure, gender,department,doctors_names, currentDate) => {
     // Render the component to a string
     const printContent = ReactDOMServer.renderToString(
       <div>
@@ -132,6 +138,8 @@ const handleLogout = () => {
           </div>
           <div style={{ flex: 1, textAlign: 'right' }}>
             <p><strong>Date:</strong> {currentDate}</p>
+            <p><strong>Department:</strong> {department}</p>
+            <p><strong>Doctors Name:</strong> {doctors_names}</p>
             <p><strong>Token Number:</strong> {serialNumber}</p>
           </div>
         </div>
@@ -354,6 +362,36 @@ const handleLogout = () => {
                       <option value="">Select Gender</option> 
                       <option value="male">Male</option>
                       <option value="female">Female</option>
+                    </select>
+                    </div>
+                    <div className="form-group">
+                    <label htmlFor="department">Department</label>
+                    <select
+                      name="department"
+                      id="department"
+                      value={formData.department}
+                      onChange={handleInputChange}
+                      required> 
+                      <option value="">Select Department</option> 
+                      <option value="orthopedic">Orthopedic</option>
+                      <option value="general_surgery">General Surgery</option>
+                      <option value="psychiatry">Psychiatry</option>
+                      <option value="physiotherapy">Physiotherapy</option>
+                    </select>
+                    </div>
+                    <div className="form-group">
+                    <label htmlFor="doctors_names">Doctors Names</label>
+                    <select
+                      name="doctors_names"
+                      id="doctors_names"
+                      value={formData.doctors_names}
+                      onChange={handleInputChange}
+                      required> 
+                      <option value="">Select Doctor</option> 
+                      <option value="Dr.J_Rajesh_MS">Dr.J Rajesh MS</option>
+                      <option value="Dr.G_Surender_MS">Dr.G Surender MS</option>
+                      <option value="Dr.B_Chinni_Krishna">Dr.B Chinni Krishna</option>
+                      <option value="Dr.B_Anil_BPT">Dr.B Anil BPT</option>
                     </select>
                     </div>
                     <button type="submit">Submit</button>
