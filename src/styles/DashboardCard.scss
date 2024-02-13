@@ -2,7 +2,7 @@
   margin-top: 70px; // Ensure this is enough to account for the header's height
   margin-left: 180px; // Adjust based on your sidebar's width
   transition: margin-left 0.3s; // For smooth sidebar toggling
-  width: calc(100% - 200px); // Full width minus the sidebar
+  width: calc(100% - 120px); // Full width minus the sidebar
   height: calc(100vh - 60px); // Full height minus the header
 
   .cards-grid {
