@@ -10,34 +10,115 @@ import englogo from '../styles/avaniEnlogo.jpg';
 const Home = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [validationMessages, setValidationMessages] = useState({
+    mobile: '',
+    blood_pressure: '',
+  });
   const [formData, setFormData] = useState({
     patientname: '',
     mobile: '',
     visitedfrom:'',
     age:'',
-    blood_pressure: '',
+    blood_pressure: '/',
     gender: '',
     department:'',
     doctors_names:'',
   });
-  // Removed the serialNumber state since it is now passed directly to handlePrint
+  
+const departmentDoctorsMap = {
+  Orthopedic: ["Dr.J Rajesh MS" ],
+  General_surgery: ["Dr.G Surender MS"],
+  Psychiatry: ["Dr.B Chinni Krishna"],
+  Physiotherapy: ["Dr.B Anil BPT"],
+};
+
+// Modified handleInputChange to handle department change
+const handleInputChanges = (e) => {
+  const { name, value } = e.target;
+
+  if (name === "department") {
+    // Reset doctors_names when department changes
+    setFormData({
+      ...formData,
+      department: value,
+      doctors_names: '',
+    });
+  } else {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
+};
 
   // Function to handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Ensure mobile value is exactly 10 digits
-    if (name === 'mobile' && /^\d{0,10}$/.test(value)) {
-        setFormData({
-          ...formData,
-          [name]: value,
-        });
-      } else if (name !== 'mobile') {
-        setFormData({
-          ...formData,
-          [name]: value,
-        });
+  
+    // Handle mobile number input
+      // Handle mobile number input
+  if (name === 'mobile') {
+    const newValue = value.replace(/[^0-9]/g, ''); // Allow only numbers
+    if (newValue.length <= 10) {
+      setFormData({ ...formData, [name]: newValue });
+    }
+
+    // Update validation message based on the mobile number length
+    if (newValue.length < 10) {
+      setValidationMessages({ ...validationMessages, mobile: 'Mobile number must be 10 digits.' });
+    } else if (newValue.length === 10) {
+      setValidationMessages({ ...validationMessages, mobile: '' }); // Clear message if exactly 10 digits
+    } else {
+      // This case may be redundant due to the <= 10 condition, but kept for clarity
+      setValidationMessages({ ...validationMessages, mobile: 'Mobile number cannot exceed 10 digits.' });
+    }
+  } else  if (name === 'age') {
+      // Your existing logic for age validation...
+      const newValue = value.replace(/[^0-9]/g, ''); // Ensure only numbers
+      if (newValue === '' || (newValue > 0 && newValue <= 100)) {
+        setFormData({ ...formData, age: newValue });
       }
-    };
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+  
+
+
+
+  const handleBloodPressureChange = (e) => {
+    let inputValue = e.target.value.replace(/[^\d/]/g, ''); // Allow only digits and "/"
+    
+    // Ensure "/" is correctly positioned between numbers
+    if (!inputValue.includes('/')) {
+      if (inputValue.length > 3) {
+        // Automatically insert "/" after 3 digits if not present and length exceeds 3
+        inputValue = `${inputValue.slice(0, 3)}/${inputValue.slice(3)}`;
+      }
+    } else {
+      // Split and enforce digit limits for both parts
+      let [systolic, diastolic] = inputValue.split('/');
+      systolic = systolic.substring(0, 3); // Limit systolic part to 3 digits
+      diastolic = (diastolic || '').substring(0, 3); // Limit diastolic part to 3 digits
+      inputValue = `${systolic}/${diastolic}`;
+    }
+  
+    setFormData({ ...formData, blood_pressure: inputValue });
+  
+    // Validate format and provide feedback
+    const bpPattern = /^\d{2,3}\/\d{2,3}$/;
+    if (bpPattern.test(inputValue) || inputValue === "") {
+      // Valid format or empty input
+      setValidationMessages({ ...validationMessages, blood_pressure: '' }); // Clear message if valid
+    } else {
+      // Potential invalid format - gentle reminder
+      setValidationMessages({ ...validationMessages, blood_pressure: 'Format: XX/XX or XXX/XXX' });
+    }
+  };
+  
+  
+       
+    
 const goToDashboard = () => {
   navigate('/dashboard');
 }
@@ -51,57 +132,66 @@ const goToDashboard = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const currentDate = getCurrentDate();
-    const dataToSend = {
-      ...formData,
-      dateofvisit: currentDate,
-    };
-    try {
-      const response = await fetch('http://localhost:5000/addpatient', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
-      const responseData = await response.json(); // Get the JSON response body
-      if (responseData.success) {
-        // Patient added successfully, now get the serial number
-        const serialNumberResponse = await fetch('http://localhost:5000/getserialnumber');
-        const serialNumberData = await serialNumberResponse.json();
-        alert(`Patient added successfully. Serial Number: ${serialNumberData.serialNumber}`);
-        handlePrint(serialNumberData.serialNumber,
-          formData.age, 
-          formData.patientname, 
-          formData.blood_pressure, 
-          formData.gender,
-          formData.department,
-          formData.doctors_names,
-          currentDate); // Pass required data to handlePrint
-        
-        // Reset form and close popup
-        setFormData({
-          patientname: '',
-          mobile: '',
-          visitedfrom:'',
-          age:'',
-          blood_pressure: '',
-          gender: '',
-          department:'',
-          doctors_names:'',
-        });
-        setShowModal(false);
-      } else {
-        // Display error message
-        alert(responseData.message || 'Failed to add patient'); // Use the message from the response
-      }
-    } catch (error) {
-      alert('An error occurred');
-      console.error('There was an error!', error);
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const currentDate = getCurrentDate();
+  const dataToSend = {
+    ...formData,
+    dateofvisit: currentDate,
   };
+   // Example validation for mobile number length on submission
+   if (formData.mobile.length !== 10) {
+    setValidationMessages({ ...validationMessages, mobile: 'Please enter a valid 10-digit mobile number.' });
+    return; // Prevent form submission
+  }
+
+  // Clear validation messages upon successful validation
+  setValidationMessages({ mobile: '' });
+  try {
+    const response = await fetch('http://localhost:5000/addpatient', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataToSend),
+    });
+    const responseData = await response.json(); // Get the JSON response body
+    if (responseData.success) {
+      // Patient added successfully, now get the serial number for the specific doctor
+      const serialNumberResponse = await fetch(`http://localhost:5000/getserialnumber?doctors_name=${encodeURIComponent(formData.doctors_names)}`);
+      const serialNumberData = await serialNumberResponse.json();
+      alert(`Patient added successfully. Serial Number: ${serialNumberData.serialNumber}`);
+      handlePrint(serialNumberData.serialNumber,
+        formData.age, 
+        formData.patientname, 
+        formData.blood_pressure, 
+        formData.gender,
+        formData.department,
+        formData.doctors_names,
+        currentDate); // Pass required data to handlePrint
+      
+      // Reset form and close popup
+      setFormData({
+        patientname: '',
+        mobile: '',
+        visitedfrom:'',
+        age:'',
+        blood_pressure: '',
+        gender: '',
+        department:'',
+        doctors_names:'',
+      });
+      setShowModal(false);
+    } else {
+      // Display error message
+      alert(responseData.message || 'Failed to add patient'); // Use the message from the response
+    }
+  } catch (error) {
+    alert('An error occurred');
+    console.error('There was an error!', error);
+  }
+};
+
 
 // Function to handle logout
 const handleLogout = () => {
@@ -125,27 +215,41 @@ const handleLogout = () => {
     return null;
   }
 
+  
   const handlePrint = (serialNumber, age, patientName, blood_pressure, gender,department,doctors_names, currentDate) => {
     // Render the component to a string
     const printContent = ReactDOMServer.renderToString(
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-          <div style={{ flex: 1, textAlign: 'left' }}>
-            <p><strong>Patient Name:</strong> {patientName}</p>
-            <p><strong>Patient Age:</strong> {age}</p>
-            <p><strong>Blood Pressure:</strong> {blood_pressure}</p>
-            <p><strong>Gender:</strong> {gender}</p>
-          </div>
-          <div style={{ flex: 1, textAlign: 'right' }}>
-            <p><strong>Date:</strong> {currentDate}</p>
-            <p><strong>Department:</strong> {department}</p>
-            <p><strong>Doctors Name:</strong> {doctors_names}</p>
-            <p><strong>Token Number:</strong> {serialNumber}</p>
-          </div>
-        </div>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <tbody>
+            <tr>
+              <td style={{ textAlign: 'left', width: '25%' }}><strong>Patient Name:</strong></td>
+              <td style={{ textAlign: 'left', width: '25%' }}>{patientName}</td>
+              <td style={{ textAlign: 'left', width: '25%' }}><strong>Date:</strong></td>
+              <td style={{ textAlign: 'left', width: '25%' }}>{currentDate}</td>
+            </tr>
+            <tr>
+              <td style={{ textAlign: 'left' }}><strong>Patient Age:</strong></td>
+              <td>{age}</td>
+              <td><strong>Department:</strong></td>
+              <td>{department}</td>
+            </tr>
+            <tr>
+              <td style={{ textAlign: 'left' }}><strong>Blood Pressure:</strong></td>
+              <td>{blood_pressure}</td>
+              <td><strong>Doctor's Name:</strong></td>
+              <td>{doctors_names}</td>
+            </tr>
+            <tr>
+              <td style={{ textAlign: 'left' }}><strong>Gender:</strong></td>
+              <td>{gender}</td>
+              <td><strong>Token Number:</strong></td>
+              <td>{serialNumber}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
-  
     // Create a new window for printing
     const printWindow = window.open('', '_blank', 'width=1200,height=600');
   
@@ -156,11 +260,15 @@ const handleLogout = () => {
       <head>
         <title>Print</title>
         <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-          }
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px; /* Adjust as needed for your printer settings */
+          border: 1.5px solid #4CAF50; /* Example of a hospital-themed border */
+          padding: 20px;
+          border-radius: 5px;
+          height: calc(100% - 10px); /* Adjust height to account for margin and border */
+          box-sizing: border-box;
+        }
           .image-header-container {
             text-align: center;
             background: url('${tellogo}') no-repeat center center; 
@@ -173,6 +281,13 @@ const handleLogout = () => {
             justify-content: space-between; 
             margin-top: 20px; 
             padding: 0 10px;
+          }
+          .content table {
+            border: 1.5px solid #4CAF50; /* Hospital theme colored border for the table */
+            margin-bottom: 20px;
+          }
+          .content td {
+            border-bottom: 1px solid #ccc; /* Lighter border for table cells */
           }
           .content div { 
             flex: 1; 
@@ -219,6 +334,10 @@ const handleLogout = () => {
           }
           
           @media print {
+            body {
+              margin: 0;
+              border: 1px solid #4CAF50; /* Ensure border is visible in print */
+            }
             /* Include the watermark and images in the print */
             .image-header-container {
                 background-image: url('${tellogo}') !important;
@@ -231,6 +350,8 @@ const handleLogout = () => {
               display: none;
             }
           }
+         
+
         </style>
       </head>
       <body>
@@ -302,18 +423,24 @@ const handleLogout = () => {
                     required/>
                     </div>
                     <div className="form-group">
-                    <label htmlFor="mobile">Mobile</label>
-                    <input
-                         type="text" // Change input type to "number"
-                         name="mobile"
-                         id="mobile"
-                         placeholder="Mobile"
-                         value={formData.mobile}
-                         onChange={handleInputChange}
-                         maxLength={10} // Set maximum length to 10
-                         required
-                />
-                    </div>
+                      <label htmlFor="mobile">Mobile</label>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <span style={{ marginRight: '8px' }}>+91</span>
+                        <input
+                          type="text"
+                          name="mobile"
+                          id="mobile"
+                          placeholder="Mobile"
+                          value={formData.mobile}
+                          onChange={handleInputChange}
+                          required
+                        />
+                        {validationMessages.mobile && <div style={{ color: 'red' }}>{validationMessages.mobile}</div>}
+                  </div>
+                  </div>
+
+
+
 
                     <div className="form-group">
                     <label htmlFor="visitedfrom">Visited From</label>
@@ -334,23 +461,30 @@ const handleLogout = () => {
                         type="text"
                         name="age"
                         id="age"
-                        placeholder="AGE "
+                        placeholder="Age "
                         value={formData.age}
                         onChange={handleInputChange}
                         required/>
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="blood_pressure">Blood Pressure</label>
-                    <input
+                      <label htmlFor="blood_pressure">Blood Pressure</label>
+                      <input
                         type="text"
                         name="blood_pressure"
                         id="blood_pressure"
-                        placeholder="Blood Pressure"
                         value={formData.blood_pressure}
-                        onChange={handleInputChange}
-                        required/>
+                        onChange={handleBloodPressureChange}
+                        required
+                      />
+                      {validationMessages.blood_pressure && (
+                          <div style={{ color: 'red', marginTop: '5px' }}>
+                            {validationMessages.blood_pressure}
+                          </div>
+                        )}
+
                     </div>
+
                     <div className="form-group">
                     <label htmlFor="gender">Gender</label>
                     <select
@@ -360,8 +494,8 @@ const handleLogout = () => {
                       onChange={handleInputChange}
                       required> 
                       <option value="">Select Gender</option> 
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
                     </select>
                     </div>
                     <div className="form-group">
@@ -373,10 +507,10 @@ const handleLogout = () => {
                       onChange={handleInputChange}
                       required> 
                       <option value="">Select Department</option> 
-                      <option value="orthopedic">Orthopedic</option>
-                      <option value="general_surgery">General Surgery</option>
-                      <option value="psychiatry">Psychiatry</option>
-                      <option value="physiotherapy">Physiotherapy</option>
+                      <option value="Orthopedic">Orthopedic</option>
+                      <option value="General_surgery">General Surgery</option>
+                      <option value="Psychiatry">Psychiatry</option>
+                      <option value="Physiotherapy">Physiotherapy</option>
                     </select>
                     </div>
                     <div className="form-group">
@@ -385,13 +519,12 @@ const handleLogout = () => {
                       name="doctors_names"
                       id="doctors_names"
                       value={formData.doctors_names}
-                      onChange={handleInputChange}
-                      required> 
-                      <option value="">Select Doctor</option> 
-                      <option value="Dr.J_Rajesh_MS">Dr.J Rajesh MS</option>
-                      <option value="Dr.G_Surender_MS">Dr.G Surender MS</option>
-                      <option value="Dr.B_Chinni_Krishna">Dr.B Chinni Krishna</option>
-                      <option value="Dr.B_Anil_BPT">Dr.B Anil BPT</option>
+                      onChange={handleInputChanges}
+                      required>
+                      <option value="">Select Doctor</option>
+                      {formData.department && departmentDoctorsMap[formData.department].map(doctor => (
+                        <option key={doctor} value={doctor}>{doctor}</option>
+                      ))}
                     </select>
                     </div>
                     <button type="submit">Submit</button>

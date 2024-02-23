@@ -108,14 +108,14 @@ def add_patient():
     cursor = conn.cursor()
     
     # Check if the patientname and mobile already exist in the table
-    check_query = "SELECT * FROM patientdetails WHERE patientname = %s AND mobile = %s"
-    cursor.execute(check_query, (data['patientname'], data['mobile']))
-    existing_patient = cursor.fetchone()
+    #check_query = "SELECT * FROM patientdetails WHERE patientname = %s AND mobile = %s"
+    #cursor.execute(check_query, (data['patientname'], data['mobile']))
+    #existing_patient = cursor.fetchone()
     
-    if existing_patient:
-        cursor.close()
-        conn.close()
-        return jsonify({"success": False, "message": "Patient with the same name and mobile already exists!"})
+    #if existing_patient:
+        #cursor.close()
+        #conn.close()
+        #return jsonify({"success": False, "message": "Patient with the same name and mobile already exists!"})
     
     # Insert data into the table if the patient doesn't exist
     insert_query = "INSERT INTO patientdetails (patientname, mobile,visitedfrom, age,blood_pressure, dateofvisit, gender,department,doctors_names) VALUES (%s, %s, %s, %s, %s, %s,%s,%s,%s)"
@@ -129,28 +129,32 @@ def add_patient():
 
 @app.route('/getserialnumber', methods=['GET'])
 def get_serial_number():
+    doctors_name = request.args.get('doctors_name')
+    if not doctors_name:
+        return jsonify({"error": "Doctor's name is required"}), 400
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     # Get the current date in dd-mm-yyyy format
     current_date = datetime.now().strftime('%d-%m-%Y')
-    print("date",current_date)
 
-    # Query to count rows with the same date in the patientdetails table
-    query = "SELECT COUNT(*) FROM patientdetails WHERE dateofvisit = %s"
+    # Query to count rows with the same date and doctor's name in the patientdetails table
+    query = "SELECT COUNT(*) FROM patientdetails WHERE dateofvisit = %s AND doctors_names = %s"
     
-    
-    cursor.execute(query, (current_date,))
+    cursor.execute(query, (current_date, doctors_name))
     result = cursor.fetchone()
     if result:
-        print("count",result)
         # Extract the count
         count = result[0]
+    else:
+        count = 0
         
-        # Close the database connection
-        conn.close()
-        # Return the count as JSON response
-        return jsonify({"serialNumber": count})
+    # Close the database connection
+    conn.close()
+    
+    # Return the count as JSON response
+    return jsonify({"serialNumber": count }) 
 
 
 

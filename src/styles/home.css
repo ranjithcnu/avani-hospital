@@ -193,6 +193,8 @@ h1 {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 9px; /* Rounded corners for buttons */
+    box-shadow: 0 4px 8px rgba(12, 23, 119, 0.582); /* Subtle shadow for depth */
   }
   
   .modal-content {
@@ -234,7 +236,7 @@ h1 {
   /* Button Style */
   button[type="submit"] {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: #073844;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
